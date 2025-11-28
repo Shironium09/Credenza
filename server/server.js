@@ -46,6 +46,7 @@ app.use(express.json());
 app.set('trust proxy', 1);
 
 app.use(session({
+
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: false,
@@ -55,6 +56,7 @@ app.use(session({
         sameSite: 'none',
         httpOnly: true
     }
+    
 }));
 
 app.use(passport.initialize());
