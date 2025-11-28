@@ -30,7 +30,7 @@ console.log('Firebase connected');
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const app = express()
-const port =  process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
 const upload = multer({ dest: 'uploads/' });
 
 app.use(cors({
@@ -56,7 +56,7 @@ app.use(session({
         sameSite: 'none',
         httpOnly: true
     }
-    
+
 }));
 
 app.use(passport.initialize());
