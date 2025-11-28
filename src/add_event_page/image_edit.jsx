@@ -9,7 +9,7 @@ function AlignmentPanel({ eventData, onFinish }){
     const [yPosition, setYPosition] = useState(50);
     const [fontSize, setFontSize] = useState(100);
     const [fontStyle, setFontStyle] = useState('Arial');
-    const fontColor = '#000000'
+    const [fontColor, setFontColor] = useState('#000000');
 
     const [scaleFactor, setScaleFactor] = useState(1);
     const imgRef = useRef(null);
@@ -137,6 +137,17 @@ function AlignmentPanel({ eventData, onFinish }){
                         >
                             {fontOptions.map(font => <option key={font.value} value={font.value}>{font.label}</option>)}
                         </select>
+                    </div>
+                    <div className="flex flex-col justify-center align-center">
+                        <label className="text-sm font-medium text-white mb-2">
+                            Font Color
+                        </label>
+                        <input
+                            type="color"
+                            value={fontColor}
+                            onChange={(e) => setFontColor(e.target.value)}
+                            className="ms-3 w-10 h-10 rounded cursor-pointer"
+                        />
                     </div>
                 </div>
 
