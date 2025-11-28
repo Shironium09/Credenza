@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/:match*",
+      "destination": "https://credenza-api.onrender.com/api/:match*"
+    },
+    {
+      "source": "/auth/:match*",
+      "destination": "https://credenza-api.onrender.com/auth/:match*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
