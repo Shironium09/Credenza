@@ -16,7 +16,7 @@ function LogoutButton(){
         .then(data => {
 
             console.log(data.message);
-            window.location.href = 'http://localhost:5173/';
+            window.location.href = '/';
 
         })
         .catch(err => {
