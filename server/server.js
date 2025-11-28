@@ -13,6 +13,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
+import MailComposer from 'nodemailer/lib/mail-composer/index.js';
 dotenv.config({ path: './.env.googleOauth' });
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -270,32 +271,17 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
 
     try{
 
-        const transporter = nodemailer.createTransport({
+        const oauth2Client = new google.auth.OAuth2(
 
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET
 
-                type: 'OAuth2',
-                user: user.email,
-                clientId: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                refreshToken: user.refreshToken,
-                accessToken: user.accessToken
+        );
 
-            },
+        oauth2Client.setCredentials({
 
-            tls: {
-
-                rejectUnauthorized: true,
-
-            },
-            family: 4,
-
-            connectionTimeout: 30000,
-            greetingTimeout: 30000,
-            socketTimeout: 30000
+            access_token: user.accessToken,
+            refresh_token: user.refreshToken,
 
         });
 
@@ -310,15 +296,43 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
             `,
             attachments: [
                 {
+
                     filename: `${toName}_${eventName}_certificate.png`,
-                    contentType: 'image/png',
                     content: certificateBuffer,
+                    encoding: 'base64'
                 },
+
             ],
 
         };
 
-        await transporter.sendMail(mailOptions);
+        const composer = new MailComposer(mailOptions);
+        const message = await composer.compile().build();
+
+        const rawMessage = Buffer.from(message)
+            .toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '');
+
+        const gmail = google.gmail({
+
+            version: 'v1',
+            auth: oauth2Client
+
+        });
+
+        await gmail.users.message.send({
+
+            userId: 'me',
+            requestBody: {
+
+                raw: rawMessage,
+
+            },
+
+        });
+
         console.log("Email sent to ", toEmail);
 
     }catch(error){
