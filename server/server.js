@@ -141,7 +141,20 @@ passport.deserializeUser(async (id, done) => {
 });
 
 app.get('/auth/google', 
-    passport.authenticate('google')
+    passport.authenticate('google', {
+
+        scope: [
+
+            'profile',
+            'email',
+            'https://www.googleapis.com/auth/drive.file', 
+            'https://mail.google.com/'
+
+        ],
+        accessType: 'offline',
+        prompt: 'consent'
+
+    })
 );
 
 app.get('/auth/google/callback',
