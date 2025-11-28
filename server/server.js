@@ -13,12 +13,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
-import path from 'path';
-import { fileURLToPath } from 'url';
 dotenv.config({ path: './.env.googleOauth' });
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
@@ -566,14 +561,6 @@ app.delete('/api/events/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete event' });
 
     }
-
-});
-
-app.use(express.static(path.join(__dirname, '../dist')));
-
-app.get('*', (req, res) => {
-
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
 
 });
 
