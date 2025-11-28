@@ -322,7 +322,7 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
 
         });
 
-        await gmail.users.message.send({
+        await gmail.users.messages.send({
 
             userId: 'me',
             requestBody: {
