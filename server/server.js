@@ -33,11 +33,6 @@ const app = express()
 const port =  process.env.PORT || 3001;
 const upload = multer({ dest: 'uploads/' });
 
-console.log('Starting server with Google OAuth credentials:');
-console.log('Google Client ID:', CLIENT_ID);
-console.log('Google Client Secret:', CLIENT_SECRET);
-
-
 app.use(cors({
     origin: [
         'http://localhost:5173',
@@ -48,12 +43,17 @@ app.use(cors({
 
 app.use(express.json());
 
+app.set('trust proxy', 1);
+
 app.use(session({
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24
+        maxAge: 1000 * 60 * 60 * 24,
+        secure: true,
+        sameSite: 'none',
+        httpOnly: true
     }
 }));
 
