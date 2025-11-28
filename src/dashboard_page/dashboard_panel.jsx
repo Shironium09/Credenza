@@ -134,7 +134,7 @@ function Dashboard_panel(){
                                     <li key={event.id} className="flex w-fuill justify-between text-white">
                                     <div>
                                         <h1 className="text-2 font-bold">{event.eventName}</h1>
-                                        <h5 clasName="text-[0.2%]">{event.eventDate}</h5>
+                                        <h5>{event.eventDate}</h5>
                                     </div>
                                     <div>
                                         <button 
