@@ -273,8 +273,8 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
         const transporter = nodemailer.createTransport({
 
             host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
+            port: 587,
+            secure: false,
             auth: {
 
                 type: 'OAuth2',
@@ -286,9 +286,16 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
 
             },
 
-            connectionTimeout: 20000,
-            greetingTimeout: 20000,
-            socketTimeout: 20000
+            tls: {
+
+                rejectUnauthorized: true,
+
+            },
+            family: 4,
+
+            connectionTimeout: 30000,
+            greetingTimeout: 30000,
+            socketTimeout: 30000
 
         });
 
