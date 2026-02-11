@@ -4,7 +4,7 @@ function Title(){
 
     return(
     <>
-        <div className="text-center text-white mt-20">
+        <div className="text-center text-white w-full h-[85vh] flex flex-col pt-40 select-none">
             <h1 className="text-6xl font-bold">Credenza</h1>
             <h2 className="text-4xl mt-3">Student Org Certificate Generator</h2>
             <div className="mt-15">
