@@ -291,8 +291,10 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
             to: toEmail,
             subject: `Certificate for ${eventName}`,
             html: `
-            <p>Hello ${toName}</p>
+            <p>Hello ${toName},</p>
             <p>We are presenting this certificate of recognition for attending the event ${eventName}. Below is your attached certificate, once again, thank you for your participation!</p>
+            <p>Below is the attached VOD incase you want to rewatch it</p>
+            <p><a href="https://www.youtube.com/watch?v=2baVsCQGLGs" target="_blank">VOD</a></p>
             `,
             attachments: [
                 {
@@ -300,6 +302,7 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
                     filename: `${toName}_${eventName}_certificate.png`,
                     content: certificateBuffer,
                     encoding: 'base64'
+                    
                 },
 
             ],
