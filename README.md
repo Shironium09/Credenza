@@ -1,17 +1,36 @@
-# React + Vite
+# Credenza Sigma
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Credenza Sigma is a web-based automation tool designed to streamline the generation and distribution of personalized certificates. It allows users to upload a template, align text dynamically, and bulk-send completed certificates via email.
 
-Currently, two official plugins are available:
+Live Demo: https://credenza-sigma.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Features
 
-## React Compiler
+    Bulk Generation: Imprint names from a CSV file directly onto image templates.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+    Live Alignment Panel: Real-time rendering to adjust Y-position, font size, and font styles for perfect text placement.
 
-## Expanding the ESLint configuration
+    CSV Integration: Seamlessly parse recipient data (names and emails) for automated processing.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+    Automated Distribution: Integrated mailing system to send generated certificates directly to recipients.
 
+
+# Tech Stack
+
+## Frontend
+
+    React: For the dynamic UI and alignment preview.
+
+    PapaParse: For client-side CSV parsing.
+
+    Vercel: Frontend hosting.
+
+## Backend
+
+    Node.js & Express: Core server logic and API handling.
+
+    node-canvas: Server-side image manipulation and certificate generation.
+
+    Multer: Middleware for handling file uploads.
+
+    Render: Backend hosting.
