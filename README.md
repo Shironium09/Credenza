@@ -1,4 +1,4 @@
-# Credenza Sigma
+# Credenza
 
 Credenza Sigma is a web-based automation tool designed to streamline the generation and distribution of personalized certificates. It allows users to upload a template, align text dynamically, and bulk-send completed certificates via email.
 
