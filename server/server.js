@@ -293,8 +293,7 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
             html: `
             <p>Hello ${toName},</p>
             <p>We are presenting this certificate of recognition for attending the event ${eventName}. Below is your attached certificate, once again, thank you for your participation!</p>
-            <p>While the VOD is still unavailable, stay tuned when it will be uploaded in the link below</p>
-            <p><a href="https://youtube.com/@gdsc.sancarlos?si=J0OMXEK8sHIntnep" target="_blank">YouTube Channel</a></p>
+            <p>As for the recording of the session, it will be uploaded here in our <a href="https://youtube.com/@gdsc.sancarlos?si=J0OMXEK8sHIntnep" target="_blank">YouTube Channel</a>. Just stay tuned!</p>
             `,
             attachments: [
                 {
