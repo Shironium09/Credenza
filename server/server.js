@@ -44,17 +44,21 @@ app.use(cors({
 
 app.use(express.json());
 
-app.set('trust proxy', 1);
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(session({
 
-    secret: 'your_secret_key',
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
     resave: false,
     saveUninitialized: false,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
-        secure: true,
-        sameSite: 'none',
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
         httpOnly: true
     }
 
@@ -105,17 +109,16 @@ async(accessToken, refreshToken, profile, done) => {
 
         console.log('Updating existing user in Firestore');
 
-        await userRef.update({
+        const updateData = { accessToken: accessToken };
+        if (refreshToken) updateData.refreshToken = refreshToken;
 
-            accessToken: accessToken,
-            
-        })
+        await userRef.update(updateData);
 
         const userData = doc.data();
         userData.accessToken = accessToken;
+        if (refreshToken) userData.refreshToken = refreshToken;
 
-
-    return done(null, userData);
+        return done(null, userData);
     }
 
 }));
@@ -274,7 +277,8 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
         const oauth2Client = new google.auth.OAuth2(
 
             process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET
+            process.env.GOOGLE_CLIENT_SECRET,
+            `${process.env.BACKEND_URL}/auth/google/callback`
 
         );
 
@@ -292,19 +296,15 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
             subject: `Certificate for ${eventName}`,
             html: `
             <p>Hello ${toName},</p>
-            <p>We are presenting this certificate of recognition for attending the event ${eventName}. Below is your attached certificate, once again, thank you for your participation!</p>
-            <p>As for the recording of the session, it will be uploaded here in our <a href="https://youtube.com/@gdsc.sancarlos?si=J0OMXEK8sHIntnep" target="_blank">YouTube Channel</a>. Just stay tuned!</p>
-            <p>Happy Coding</p>
+            <p>We are presenting this certificate of recognition for attending the event ${eventName}. Below is your attached certificate, once again, thank you for your participation, we hope you learned something and we wish to see you again in future events!</p>
+            <p>As for the VOD of the session, please visit our page on <a href="https://www.facebook.com/share/v/1D9JjwWXDG/" target="_blank">Facebook</a>!</p>
+            <p>Happy Coding!</p>
             `,
             attachments: [
                 {
-
                     filename: `${toName}_${eventName}_certificate.png`,
                     content: certificateBuffer,
-                    encoding: 'base64'
-                    
                 },
-
             ],
 
         };
@@ -328,6 +328,7 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
         await gmail.users.messages.send({
 
             userId: 'me',
+            uploadType: 'multipart',
             requestBody: {
 
                 raw: rawMessage,
@@ -353,7 +354,8 @@ async function setFolder(user, folderName){
         const oauth2Client = new google.auth.OAuth2(
 
             process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET
+            process.env.GOOGLE_CLIENT_SECRET,
+            `${process.env.BACKEND_URL}/auth/google/callback`
 
         );
 
@@ -417,6 +419,7 @@ async function uploadToFolder(user, folderId, certificateBuffer, fileName){
         const oauth2Client = new google.auth.OAuth2(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,
+            `${process.env.BACKEND_URL}/auth/google/callback`
         );
 
         oauth2Client.setCredentials({
