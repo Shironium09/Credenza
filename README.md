@@ -1,3 +1,5 @@
+# CURRENTLY UNDER REFACTORING !!!
+
 # Credenza
 
 Credenza is a web-based certificate automation tool that streamlines the generation and distribution of personalized certificates. Upload a template, align text dynamically with a live preview, import recipient data from a CSV file, and bulk-send completed certificates via email -- all from a single dashboard.
