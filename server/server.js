@@ -270,7 +270,7 @@ app.get('/auth/logout', (req, res, next) => {
 
 });
 
-async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
+async function sendEmail(user, toEmail, toName, eventName, certificateBuffer, emailSubject, emailBody){
 
     try{
 
@@ -289,17 +289,22 @@ async function sendEmail(user, toEmail, toName, eventName, certificateBuffer){
 
         });
 
+        // Replace placeholders in subject and body
+        const finalSubject = emailSubject
+            .replace(/\{name\}/g, toName)
+            .replace(/\{eventName\}/g, eventName);
+
+        const finalBody = emailBody
+            .replace(/\{name\}/g, toName)
+            .replace(/\{eventName\}/g, eventName)
+            .replace(/\n/g, '<br>');
+
         const mailOptions = {
 
             from: user.email,
             to: toEmail,
-            subject: `Certificate for ${eventName}`,
-            html: `
-            <p>Hello ${toName},</p>
-            <p>We are presenting this certificate of recognition for attending the event ${eventName}. Below is your attached certificate, once again, thank you for your participation, we hope you learned something and we wish to see you again in future events!</p>
-            <p>As for the VOD of the session, please visit our page on <a href="https://www.facebook.com/share/v/1D9JjwWXDG/" target="_blank">Facebook</a>!</p>
-            <p>Happy Coding!</p>
-            `,
+            subject: finalSubject,
+            html: finalBody,
             attachments: [
                 {
                     filename: `${toName}_${eventName}_certificate.png`,
@@ -486,6 +491,8 @@ app.post('/api/generate', upload.fields([
             const font = `${fontSize}px Arial`;
             const eventName = req.body.eventName;
             const user = req.user;
+            const emailSubject = req.body.emailSubject || `Certificate for ${eventName}`;
+            const emailBody = req.body.emailBody || `Hello {name},\n\nPlease find your certificate for {eventName} attached.`;
             const fontColor = req.body.fontColor || '#000000';
 
             const templatePath = req.files.templateFile[0].path;
@@ -542,7 +549,7 @@ app.post('/api/generate', upload.fields([
 
                 const buffer = canvas.toBuffer('image/png');
 
-                await sendEmail(user, email, name, eventName, buffer);
+                await sendEmail(user, email, name, eventName, buffer, emailSubject, emailBody);
 
                 const fileName = `${eventName}_${name}.png`;
                 if(folderId){

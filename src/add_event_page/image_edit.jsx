@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Papa from 'papaparse';
 
-function AlignmentPanel({ eventData, onFinish }){
+function AlignmentPanel({ eventData, onNext }){
 
     const [templateURL, setTemplateURL] = useState('');
     const [sampleName, setSampleName] = useState('Juan De La L. Cruz');
@@ -76,21 +76,15 @@ function AlignmentPanel({ eventData, onFinish }){
 
     };
 
-    const handleFinish = () => {
+    const handleNext = () => {
 
-        const formData = new FormData();
+        onNext({
+            yPosition,
+            fontSize,
+            fontColor,
+            fontStyle,
+        });
 
-        formData.append('eventName', eventData.eventName);
-        formData.append('eventDate', eventData.eventDate);
-        formData.append('templateFile', eventData.templateFile);
-        formData.append('csvFile', eventData.csvFile);
-
-        formData.append('yPosition', yPosition);
-        formData.append('fontSize', fontSize);
-        formData.append('fontColor', fontColor);
-        formData.append('fontStyle', fontStyle);
-
-    onFinish(formData);
     };
 
     return(
@@ -175,7 +169,7 @@ function AlignmentPanel({ eventData, onFinish }){
                     >{sampleName}</p>
                 </div>
             </div>
-            <button onClick={handleFinish} className="mt-6 px-10 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-gray-200 transition-colors">Finish</button>
+            <button onClick={handleNext} className="mt-6 px-10 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-gray-200 transition-colors">Next Step</button>
         </div>
     )
 
