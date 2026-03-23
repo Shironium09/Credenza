@@ -514,60 +514,62 @@ app.post('/api/generate', upload.fields([
             console.log('Event stored in Firestore');
 
             const folderId = await setFolder(user, eventName);
-
             const image = await loadImage(templatePath);
 
-            fs.createReadStream(csvPath)
-            .pipe(csvParser())
-            .on('data', async (row) => {
+            const rows = [];
+            await new Promise((resolve, reject) => {
+                fs.createReadStream(csvPath)
+                .pipe(csvParser())
+                .on('data', (row) => rows.push(row))
+                .on('end', resolve)
+                .on('error', reject);
+            });
 
+            for (const row of rows) {
                 const name = row.Name;
                 const email = row.Email;
 
                 if(!name || !email){
-
                     console.warn('Skipping invalid row: ', row);
-                    return;
-
+                    continue;
                 }
 
-                const canvas = createCanvas(image.width, image.height);
-                const ctx = canvas.getContext('2d');
+                try {
+                    const canvas = createCanvas(image.width, image.height);
+                    const ctx = canvas.getContext('2d');
 
-                ctx.drawImage(image, 0, 0);
-                
-                const fontName = req.body.fontStyle || 'Arial';
-                ctx.font = `bold ${fontSize}px "${fontName}"`;
-                ctx.fillStyle = fontColor;
-                ctx.textAlign = 'center';
+                    ctx.drawImage(image, 0, 0);
+                    
+                    const fontName = req.body.fontStyle || 'Arial';
+                    ctx.font = `bold ${fontSize}px "${fontName}"`;
+                    ctx.fillStyle = fontColor;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
 
-                ctx.textBaseline = 'middle';
+                    const yPx = canvas.height * (yPercent/100);
+                    ctx.fillText(name, canvas.width / 2, yPx);
 
-                const yPx = canvas.height * (yPercent/100);
+                    const buffer = canvas.toBuffer('image/png');
 
-                ctx.fillText(name, canvas.width / 2, yPx);
+                    await sendEmail(user, email, name, eventName, buffer, emailSubject, emailBody);
 
-                const buffer = canvas.toBuffer('image/png');
+                    const fileName = `${eventName}_${name}.png`;
+                    if(folderId){
+                        await uploadToFolder(user, folderId, buffer, fileName);
+                    }
 
-                await sendEmail(user, email, name, eventName, buffer, emailSubject, emailBody);
-
-                const fileName = `${eventName}_${name}.png`;
-                if(folderId){
-
-                    await uploadToFolder(user, folderId, buffer, fileName);
-
+                    console.log('Generated Certificate for', name);
+                } catch (rowError) {
+                    console.error(`Failed to process or send for ${name} (${email}):`, rowError);
                 }
 
-                console.log('Generated Certificate for ', name);
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
 
-            })
-            .on('end', () => {
-
-                fs.unlinkSync(templatePath);
-                fs.unlinkSync(csvPath);
+            fs.unlinkSync(templatePath);
+            fs.unlinkSync(csvPath);
 
             res.status(200).json({ message: 'Successfully Generated Certificate'});
-            });
 
         } catch (err) {
 
