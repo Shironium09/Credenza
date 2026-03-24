@@ -1,5 +1,5 @@
 import Google_Logo from '../assets/Google_Logo.svg'
-import SOS_logo from '../assets/SOS_logo.svg'
+import logo from '../assets/credenza_logo.svg'
 
 function LoginPanel() {
 
@@ -8,7 +8,7 @@ function LoginPanel() {
             <div>
                 <div className="form-card w-120 h-110 bg-white rounded-xl flex flex-col justify-center items-center p-15 border-2 border-gray-300">
                     <div className="flex flex-col justify-center items-center">
-                        <img src={SOS_logo} className="w-50 h-30" />
+                        <img src={logo} className="w-50 h-30" alt="logo"/>
                         <h1 className="text-center text-3xl text-white text-bold">Login With Google</h1>
                         <p className="text-center text-[15px] mt-3 text-white">We only support Google login as to be able to connect it with your Google Drive and be able to store the files in your drive</p>
                     </div>

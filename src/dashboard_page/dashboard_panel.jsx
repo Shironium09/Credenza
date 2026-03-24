@@ -115,67 +115,86 @@ function Dashboard_panel(){
     }
 
     return( 
-        <div className="form-card w-[90%] h-[95%] p-2 flex justify-center items-center flex-col">
-            <div className="w-[95%] flex justify-between items-center p-2">
-                <div className="flex items-center p-2 border-2 border-white rounded-full mini_info">
-                    {user && (<h1 className="text-white ">{user.name}</h1>)}
+        <div className="w-full h-screen flex flex-col p-6 gap-4">
+
+            <div className="flex justify-between items-center">
+                <div>
+                    {user && (
+                        <h1 className="text-white text-2xl font-bold">
+                            Welcome, <span className="text-purple-400">{user.name}</span>
+                        </h1>
+                    )}
                 </div>
-                <div className="flex items-center p-2 border-2 border-white rounded-full button">
-                    <LogoutButton/>
-                </div>
-            </div>
-            <div className="w-full h-[70%] flex justify-center items-center">
-                <div className="w-[95%] h-[95%] form-card">
-                    <div className='w-full h-full dashboard-container p-3'>
-                        {events.length > 0 ? (
-                        <ul className="flex flex-col flex-col-reverse gap-3">
-                            {events.map(event => (
-                                <div className="w-full mini-info round-white-border">
-                                    <li key={event.id} className="flex w-fuill justify-between text-white">
-                                    <div>
-                                        <h1 className="text-2 font-bold">{event.eventName}</h1>
-                                        <h5>{event.eventDate}</h5>
-                                    </div>
-                                    <div>
-                                        <button 
-                                            onClick={() => handleDeleteClick((event.id))}
-                                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm transition-colors h-[70%] mt-2 cursor-pointer"
-                                        >
-                                        Delete
-                                        </button>
-                                    </div>
-                                    </li>
-                                </div>
-                            ))}
-                        </ul>
-                        ) : (
-                            <p className="text-white text-center mt-10 mb-10 font-bold text-2xl">You haven't created any events yet...</p>
-                        )}
+                <div className="flex items-center gap-3">
+                    <Link 
+                        to="/event" 
+                        className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
+                    >
+                        + New Event
+                    </Link>
+                    <div className="border border-gray-600 hover:border-gray-500 rounded-lg px-4 py-2 transition-colors">
+                        <LogoutButton/>
                     </div>
                 </div>
             </div>
-            <div className="w-[95%] flex justify-between items-center p-1">
-                <div className="flex items-center p-2 border-2 border-white rounded-full button">
-                    <Link to="/event" className="text-white">Create Event</Link>
-                </div>       
+            <div className="flex-1 overflow-hidden flex flex-col">
+                <h2 className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-3">Your Events</h2>
+                <div className="flex-1 overflow-y-auto flex flex-col gap-2 pr-1">
+                    {events.length > 0 ? (
+                        [...events].reverse().map(event => (
+                            <div key={event.id} className="flex justify-between items-center bg-neutral-950 border border-gray-600 rounded-xl px-4 py-3 hover:bg-zinc-950 hover:border-white transition-all">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-purple-500/15 border border-purple-500/25 rounded-lg flex flex-col items-center justify-center shrink-0">
+                                        <span className="text-purple-400 text-sm font-bold leading-none">
+                                            {new Date(event.eventDate).getDate()}
+                                        </span>
+                                        <span className="text-purple-300/70 text-[10px] uppercase">
+                                            {new Date(event.eventDate).toLocaleString('default', { month: 'short' })}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-semibold">{event.eventName}</h3>
+                                        <p className="text-gray-500 text-xs mt-0.5">
+                                            {new Date(event.eventDate).toLocaleDateString('en-US', {
+                                                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                                            })}
+                                        </p>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={() => handleDeleteClick(event.id)}
+                                    className="bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/25 hover:border-red-500 hover:text-red-300 text-xs font-semibold px-4 py-1.5 rounded-lg transition-all cursor-pointer"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <p className="text-white text-lg font-semibold">No events yet</p>
+                            <p className="text-gray-500 text-sm mt-1">Create your first event to get started</p>
+                            <Link to="/event" className="mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors">
+                                + Create Event
+                            </Link>
+                        </div>
+                    )}
+                </div>
             </div>
-
             {showModal && (
-                <div className="absolute inset-0 flex items-center justify-center bg-opacity-70 backdrop-blur-sm bg-white/30 p-6 rounded-xl z-50">
-                    <div className="bg-black p-6 rounded-lg shadow-xl w-80 text-center p-2 border-2 border-white">
-                        <h3 className="text-white text-xl font-bold mb-2 text-gray-800">Delete Event?</h3>
-                        <p className="text-white mb-6">Are you sure you want to delete this event? This cannot be undone.</p>
-                        
-                        <div className="flex justify-center gap-4">
+                <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
+                    <div className="bg-[#1e1e1e] border border-white/10 rounded-2xl p-8 w-96 text-center shadow-2xl">
+                        <h3 className="text-white text-lg font-bold mb-2">Delete Event?</h3>
+                        <p className="text-gray-400 text-sm mb-6">This action cannot be undone.</p>
+                        <div className="flex justify-center gap-3">
                             <button 
                                 onClick={cancelDelete}
-                                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded font-semibold transition-colors cursor-pointer"
+                                className="px-5 py-2.5 bg-white/10 border border-white/15 hover:bg-white/15 text-gray-300 rounded-lg font-semibold text-sm transition-colors cursor-pointer"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={confirmDelete}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-semibold transition-colors cursor-pointer"
+                                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer"
                             >
                                 Confirm
                             </button>
