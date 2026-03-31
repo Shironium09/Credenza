@@ -10,6 +10,7 @@ function Event(){
     const [step, setStep] = useState('form');
     const [eventData, setEventData] = useState(null);
     const [alignmentData, setAlignmentData] = useState(null);
+    const [isSending, setIsSending] = useState(false);
     const navigate = useNavigate();
 
     const handleNextStep = (data) => {
@@ -30,6 +31,8 @@ function Event(){
 
         const API_URL = import.meta.env.VITE_API_URL;
 
+        setIsSending(true);
+
         fetch(`${API_URL}/api/generate`, {
 
             method: 'POST',
@@ -44,11 +47,12 @@ function Event(){
             navigate('/dashboard');
 
         })
-        .catch(err => [
+        .catch(err => {
 
-            console.error('Error: ', err)
+            console.error('Error: ', err);
+            setIsSending(false);
 
-        ]);
+        });
 
     };
 
@@ -57,7 +61,7 @@ function Event(){
         <div className="flex flex-col justify-center items-center w-full h-screen">
             { step === 'form' && (<EventPage onNext={handleNextStep}/>)}
             { step === 'align' && (<AlginmentPanel eventData={eventData} onNext={handleAlignNext}/>)}
-            { step === 'email' && (<EmailComposer eventData={eventData} alignmentData={alignmentData} onFinish={handleFinish}/>)}
+            { step === 'email' && (<EmailComposer eventData={eventData} alignmentData={alignmentData} onFinish={handleFinish} isSending={isSending}/>)}
         </div>
     </>
     );

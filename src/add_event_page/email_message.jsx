@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
-function EmailComposer({ eventData, alignmentData, onFinish }){
+function EmailComposer({ eventData, alignmentData, onFinish, isSending }){
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [subject, setSubject] = useState(`Certificate for ${eventData?.eventName || ''}`);
     const [body, setBody] = useState(
         `Hello {name},
@@ -12,6 +13,10 @@ function EmailComposer({ eventData, alignmentData, onFinish }){
     );
 
     const handleFinish = () => {
+
+        if (isSubmitting || isSending) return;
+
+        setIsSubmitting(true);
 
         const formData = new FormData();
 
@@ -106,9 +111,14 @@ function EmailComposer({ eventData, alignmentData, onFinish }){
 
             <button
                 onClick={handleFinish}
-                className="mt-5 px-10 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-gray-200 transition-colors self-center cursor-pointer"
+                disabled={isSubmitting || isSending}
+                className={`mt-5 px-10 py-3 font-semibold rounded-full shadow transition-colors self-center ${
+                    isSubmitting || isSending
+                        ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                        : 'bg-white text-black hover:bg-gray-200 cursor-pointer'
+                }`}
             >
-                Send Certificates
+                {isSubmitting || isSending ? 'Processing...' : 'Send Certificates'}
             </button>
 
         </div>
