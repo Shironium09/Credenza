@@ -8,7 +8,7 @@ function AlignmentPanel({ eventData, onNext }){
 
     const [yPosition, setYPosition] = useState(50);
     const [fontSize, setFontSize] = useState(100);
-    const [fontStyle, setFontStyle] = useState('Arial');
+    const [fontStyle, setFontStyle] = useState('Poppins');
     const [fontColor, setFontColor] = useState('#000000');
 
     const [scaleFactor, setScaleFactor] = useState(1);
@@ -16,11 +16,16 @@ function AlignmentPanel({ eventData, onNext }){
 
     const fontOptions = [
 
-        {label: 'Arial', value: 'Arial'},
-        {label: 'Times New Roman', value: 'Times New Roman'},
-        {label: 'Courier New', value: 'Courier New'},
-        {label: 'Georgia', value: 'Georgia'},
-        {label: 'Verdana', value: 'Verdana'},
+        {label: 'Poppins', value: 'Poppins'},
+        {label: 'Montserrat', value: 'Montserrat'},
+        {label: 'Raleway', value: 'Raleway'},
+        {label: 'Arimo (≈ Arial)', value: 'Arimo'},
+        {label: 'Playfair Display', value: 'Playfair Display'},
+        {label: 'EB Garamond', value: 'EB Garamond'},
+        {label: 'Lora', value: 'Lora'},
+        {label: 'Tinos (≈ Times New Roman)', value: 'Tinos'},
+        {label: 'Cousine (≈ Courier New)', value: 'Cousine'},
+        {label: 'Great Vibes', value: 'Great Vibes'},
 
     ];
 

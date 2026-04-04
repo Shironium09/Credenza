@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import csvParser from 'csv-parser';
-import { createCanvas, loadImage, registerFont } from 'canvas';
+import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -13,16 +13,17 @@ const __dirname = path.dirname(__filename);
 // Register bundled fonts so they work on any server (Linux containers, etc.)
 const fontsDir = path.join(__dirname, 'fonts');
 
-registerFont(path.join(fontsDir, 'Arimo-Variable.ttf'), { family: 'Arimo', weight: 'bold' });
-registerFont(path.join(fontsDir, 'Tinos-Bold.ttf'), { family: 'Tinos', weight: 'bold' });
-registerFont(path.join(fontsDir, 'Cousine-Bold.ttf'), { family: 'Cousine', weight: 'bold' });
-registerFont(path.join(fontsDir, 'Poppins-Bold.ttf'), { family: 'Poppins', weight: 'bold' });
-registerFont(path.join(fontsDir, 'Montserrat-Variable.ttf'), { family: 'Montserrat', weight: 'bold' });
-registerFont(path.join(fontsDir, 'PlayfairDisplay-Variable.ttf'), { family: 'Playfair Display', weight: 'bold' });
-registerFont(path.join(fontsDir, 'EBGaramond-Variable.ttf'), { family: 'EB Garamond', weight: 'bold' });
-registerFont(path.join(fontsDir, 'Lora-Variable.ttf'), { family: 'Lora', weight: 'bold' });
-registerFont(path.join(fontsDir, 'Raleway-Variable.ttf'), { family: 'Raleway', weight: 'bold' });
-registerFont(path.join(fontsDir, 'GreatVibes-Regular.ttf'), { family: 'Great Vibes' });
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Arimo-Bold.ttf'), 'Arimo');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Tinos-Bold.ttf'), 'Tinos');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Cousine-Bold.ttf'), 'Cousine');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Poppins-Bold.ttf'), 'Poppins');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Montserrat-Bold.ttf'), 'Montserrat');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'PlayfairDisplay-Bold.ttf'), 'Playfair Display');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'EBGaramond-Bold.ttf'), 'EB Garamond');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Lora-Bold.ttf'), 'Lora');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'Raleway-Bold.ttf'), 'Raleway');
+GlobalFonts.registerFromPath(path.join(fontsDir, 'GreatVibes-Regular.ttf'), 'Great Vibes');
+
 
 console.log('Fonts registered successfully');
 import cors from 'cors';
