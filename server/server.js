@@ -2,7 +2,29 @@ import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
 import csvParser from 'csv-parser';
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas, loadImage, registerFont } from 'canvas';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Resolve __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Register bundled fonts so they work on any server (Linux containers, etc.)
+const fontsDir = path.join(__dirname, 'fonts');
+
+registerFont(path.join(fontsDir, 'Arimo-Variable.ttf'), { family: 'Arimo', weight: 'bold' });
+registerFont(path.join(fontsDir, 'Tinos-Bold.ttf'), { family: 'Tinos', weight: 'bold' });
+registerFont(path.join(fontsDir, 'Cousine-Bold.ttf'), { family: 'Cousine', weight: 'bold' });
+registerFont(path.join(fontsDir, 'Poppins-Bold.ttf'), { family: 'Poppins', weight: 'bold' });
+registerFont(path.join(fontsDir, 'Montserrat-Variable.ttf'), { family: 'Montserrat', weight: 'bold' });
+registerFont(path.join(fontsDir, 'PlayfairDisplay-Variable.ttf'), { family: 'Playfair Display', weight: 'bold' });
+registerFont(path.join(fontsDir, 'EBGaramond-Variable.ttf'), { family: 'EB Garamond', weight: 'bold' });
+registerFont(path.join(fontsDir, 'Lora-Variable.ttf'), { family: 'Lora', weight: 'bold' });
+registerFont(path.join(fontsDir, 'Raleway-Variable.ttf'), { family: 'Raleway', weight: 'bold' });
+registerFont(path.join(fontsDir, 'GreatVibes-Regular.ttf'), { family: 'Great Vibes' });
+
+console.log('Fonts registered successfully');
 import cors from 'cors';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -540,8 +562,9 @@ app.post('/api/generate', upload.fields([
 
                     ctx.drawImage(image, 0, 0);
                     
-                    const fontName = req.body.fontStyle || 'Arial';
-                    ctx.font = `bold ${fontSize}px "${fontName}"`;
+                    const fontName = req.body.fontStyle || 'Poppins';
+                    const isScriptFont = fontName === 'Great Vibes';
+                    ctx.font = `${isScriptFont ? '' : 'bold '}${fontSize}px "${fontName}"`;
                     ctx.fillStyle = fontColor;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
