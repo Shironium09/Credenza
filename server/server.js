@@ -541,16 +541,16 @@ app.post('/api/generate', upload.fields([
 
             const rows = [];
             await new Promise((resolve, reject) => {
-                fs.createReadStream(csvPath)
-                .pipe(csvParser())
+                fs.createReadStream(csvPath, { encoding: 'utf-8' })
+                .pipe(csvParser({ bom: true }))
                 .on('data', (row) => rows.push(row))
                 .on('end', resolve)
                 .on('error', reject);
             });
 
             for (const row of rows) {
-                const name = row.Name;
-                const email = row.Email;
+                const name = row.Name ? row.Name.normalize('NFC').trim() : undefined;
+                const email = row.Email ? row.Email.trim() : undefined;
 
                 if(!name || !email){
                     console.warn('Skipping invalid row: ', row);
