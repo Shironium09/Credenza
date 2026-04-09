@@ -72,3 +72,8 @@ The app will be available at `http://localhost:5173`.
 3. **Upload a certificate template** (image) and a **CSV file** containing `Name` and `Email` columns.
 4. **Adjust text placement** using the live alignment panel -- set Y-position, font size, font style, and color.
 5. **Generate and send** -- the server renders each certificate with the recipient's name, emails it to them via the Gmail API, and backs up all files to a Google Drive folder.
+
+To Add:
+> Better UX
+> Better Parsing
+> Better handling of edge cases
