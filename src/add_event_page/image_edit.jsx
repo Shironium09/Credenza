@@ -1,15 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Papa from 'papaparse';
 
-function AlignmentPanel({ eventData, onNext }){
+function AlignmentPanel({ eventData, onNext, onBack, yPosition, setYPosition, fontSize, setFontSize, fontStyle, setFontStyle, fontColor, setFontColor }){
 
     const [templateURL, setTemplateURL] = useState('');
     const [sampleName, setSampleName] = useState('Juan De La L. Cruz');
-
-    const [yPosition, setYPosition] = useState(50);
-    const [fontSize, setFontSize] = useState(100);
-    const [fontStyle, setFontStyle] = useState('Poppins');
-    const [fontColor, setFontColor] = useState('#000000');
 
     const [scaleFactor, setScaleFactor] = useState(1);
     const imgRef = useRef(null);
@@ -83,12 +78,7 @@ function AlignmentPanel({ eventData, onNext }){
 
     const handleNext = () => {
 
-        onNext({
-            yPosition,
-            fontSize,
-            fontColor,
-            fontStyle,
-        });
+        onNext();
 
     };
 
@@ -177,9 +167,14 @@ function AlignmentPanel({ eventData, onNext }){
 
                     </div>
 
-                    <button onClick={handleNext} className="mt-auto px-10 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-gray-200 transition-colors cursor-pointer">
-                        Next Step
-                    </button>
+                    <div className="mt-auto flex gap-3">
+                        <button onClick={onBack} className="flex-1 px-6 py-3 bg-transparent border border-zinc-600 text-gray-300 font-semibold rounded-full shadow hover:bg-zinc-700 transition-colors cursor-pointer">
+                            Back
+                        </button>
+                        <button onClick={handleNext} className="flex-1 px-6 py-3 bg-white text-black font-semibold rounded-full shadow hover:bg-gray-200 transition-colors cursor-pointer">
+                            Next Step
+                        </button>
+                    </div>
 
                 </div>
 
