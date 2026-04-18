@@ -507,6 +507,17 @@ app.post('/api/generate', upload.fields([
             return res.status(401).json({ error: 'You are not logged in' });
         }
 
+        // Set up SSE headers
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+        });
+
+        const sendSSE = (data) => {
+            res.write(`data: ${JSON.stringify(data)}\n\n`);
+        };
+
         try{
 
             const yPercent = parseFloat(req.body.yPosition);
@@ -514,6 +525,7 @@ app.post('/api/generate', upload.fields([
             const font = `${fontSize}px Arial`;
             const eventName = req.body.eventName;
             const user = req.user;
+            const sendMode = req.body.sendMode || 'email';
             const emailSubject = req.body.emailSubject || `Certificate for ${eventName}`;
             const emailBody = req.body.emailBody || `Hello {name},\n\nPlease find your certificate for {eventName} attached.`;
             const fontColor = req.body.fontColor || '#000000';
@@ -548,12 +560,27 @@ app.post('/api/generate', upload.fields([
                 .on('error', reject);
             });
 
+            // Send initial total count
+            sendSSE({ current: 0, total: rows.length });
+
+            let processed = 0;
+
             for (const row of rows) {
                 const name = row.Name ? row.Name.normalize('NFC').trim() : undefined;
                 const email = row.Email ? row.Email.trim() : undefined;
 
-                if(!name || !email){
-                    console.warn('Skipping invalid row: ', row);
+                // In generate mode, only name is required; in email mode, both are required
+                if (!name) {
+                    console.warn('Skipping row with no name: ', row);
+                    processed++;
+                    sendSSE({ current: processed, total: rows.length });
+                    continue;
+                }
+
+                if (sendMode === 'email' && !email) {
+                    console.warn('Skipping row with no email (email mode): ', row);
+                    processed++;
+                    sendSSE({ current: processed, total: rows.length });
                     continue;
                 }
 
@@ -575,7 +602,10 @@ app.post('/api/generate', upload.fields([
 
                     const buffer = canvas.toBuffer('image/png');
 
-                    await sendEmail(user, email, name, eventName, buffer, emailSubject, emailBody);
+                    // Only send email if in email mode
+                    if (sendMode === 'email' && email) {
+                        await sendEmail(user, email, name, eventName, buffer, emailSubject, emailBody);
+                    }
 
                     const fileName = `${eventName}_${name}.png`;
                     if(folderId){
@@ -584,8 +614,11 @@ app.post('/api/generate', upload.fields([
 
                     console.log('Generated Certificate for', name);
                 } catch (rowError) {
-                    console.error(`Failed to process or send for ${name} (${email}):`, rowError);
+                    console.error(`Failed to process for ${name}:`, rowError);
                 }
+
+                processed++;
+                sendSSE({ current: processed, total: rows.length });
 
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
@@ -593,12 +626,15 @@ app.post('/api/generate', upload.fields([
             fs.unlinkSync(templatePath);
             fs.unlinkSync(csvPath);
 
-            res.status(200).json({ message: 'Successfully Generated Certificate'});
+            // Send completion event
+            sendSSE({ done: true, message: 'Successfully Generated Certificates' });
+            res.end();
 
         } catch (err) {
 
             console.error('Error Generating Certificates: ',err);
-            res.status(500).json({ error: 'Internal Server Error' });
+            sendSSE({ error: 'Internal Server Error' });
+            res.end();
 
         }
 
